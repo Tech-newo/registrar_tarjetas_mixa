@@ -1,0 +1,110 @@
+{% extends 'base/main.html' %}
+
+{% block title %}Guardar empresa{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Validar código</h1>
+    <p class="subtitle">Ingrese el código de verificación de 6 dígitos</p>
+    
+    <!-- FORMULARIO TRADICIONAL -->
+    <form method="POST" 
+    action="{{ url_for('pagos_bp.crear_tarjeta') }}"
+    onsubmit="return prepararFormulario()">
+        <div class="code-inputs">
+            {% for i in range(6) %}
+            <input 
+                type="text"
+                maxlength="1"
+                class="code-input"
+                data-index="{{ i }}"
+                oninput="moveToNext(this)"
+                onkeydown="moveToPrevious(event, this)"
+            />
+            {% endfor %}
+        </div>
+
+        <!-- Campo oculto para enviar el código -->
+        <input type="hidden" name="code" id="codigo_completo">
+
+        <!-- Campo oculto para la empresa -->
+        <input type="hidden" name="empresa" value='{{ empresas | tojson }}'>
+
+        <button 
+            type="submit"
+            class="verify-button"
+        >
+            Verificar código
+        </button>
+    </form>
+</div>
+
+<script>
+    function moveToNext(input) {
+        const maxLength = parseInt(input.maxLength);
+        const currentLength = input.value.length;
+        
+        if (currentLength >= maxLength) {
+            const nextIndex = parseInt(input.dataset.index) + 1;
+            const nextInput = document.querySelector(`.code-input[data-index="${nextIndex}"]`);
+            
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+        
+        input.value = input.value.charAt(0);
+    }
+    
+    function moveToPrevious(event, input) {
+        if (event.key === 'Backspace' && input.value.length === 0) {
+            const prevIndex = parseInt(input.dataset.index) - 1;
+            const prevInput = document.querySelector(`.code-input[data-index="${prevIndex}"]`);
+            
+            if (prevIndex >= 0 && prevInput) {
+                prevInput.focus();
+            }
+        }
+    }
+
+    function prepararFormulario() {
+        const inputs = document.querySelectorAll('.code-input');
+        let code = '';
+
+        inputs.forEach(input => {
+            code += input.value;
+        });
+
+        if (code.length !== 6) {
+            alert('Por favor complete todos los dígitos del código');
+            return false; // Evita envío del formulario
+        }
+
+        // Asignar el valor al input oculto
+        document.getElementById('codigo_completo').value = code;
+        return true; // Permite el envío
+    }
+
+    // Detecta evento de pegar
+    document.querySelector('.code-input[data-index="0"]').addEventListener('paste', function (e) {
+        e.preventDefault();
+        const paste = (e.clipboardData || window.clipboardData).getData('text');
+        const digits = paste.replace(/\D/g, '').slice(0, 6); // Solo dígitos, máximo 6
+
+        const inputs = document.querySelectorAll('.code-input');
+        digits.split('').forEach((digit, idx) => {
+            if (inputs[idx]) {
+                inputs[idx].value = digit;
+            }
+        });
+
+        // Mueve el foco al siguiente input vacío
+        for (let i = 0; i < inputs.length; i++) {
+            if (inputs[i].value === '') {
+                inputs[i].focus();
+                break;
+            }
+        }
+    });
+</script>
+{% endblock %}

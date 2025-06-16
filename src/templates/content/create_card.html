@@ -1,0 +1,121 @@
+{% extends 'base/main.html' %}
+
+{% block title %}Guardar empresa{% endblock %}
+
+{% block content %}
+<section class="w-[100dvw] min-h-[100dvh] flex flex-col justify-center items-center">
+    <form
+        method="POST" 
+        action="{{ url_for('pagos_bp.crear_tarjeta_act') }}"
+        class="w-full md:max-w-[520px] min-h-[400px] flex flex-col justify-center items-center gap-[60px] !p-4">
+        
+        <!-- Título del formulario -->
+        <div class="w-full text-center">
+            <h1 class="!text-3xl font-bold text-gray-800">
+                Registrar método de pago.
+            </h1>
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="w-full flex flex-col gap-[8px]">
+            <!-- Campo oculto con datos de empresa (JSON escapado correctamente) -->
+            <input type="hidden" name="empresa" value='{{ empresa | tojson | safe }}'>
+            
+            <span>Número de tarjeta</span>
+            <input 
+                type="text"
+                name="numero_tarjeta"
+                placeholder="1234 5678 9012 3456"
+                maxlength="19"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            
+            <span>CVC</span>
+            <input 
+                type="text"
+                name="cvc"
+                placeholder="123"
+                maxlength="4"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            
+            <span>Mes de vencimiento</span>
+            <select 
+                name="mes_vencimiento"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+                <option value="">Seleccionar mes</option>
+                <option value="01">01 - Enero</option>
+                <option value="02">02 - Febrero</option>
+                <option value="03">03 - Marzo</option>
+                <option value="04">04 - Abril</option>
+                <option value="05">05 - Mayo</option>
+                <option value="06">06 - Junio</option>
+                <option value="07">07 - Julio</option>
+                <option value="08">08 - Agosto</option>
+                <option value="09">09 - Septiembre</option>
+                <option value="10">10 - Octubre</option>
+                <option value="11">11 - Noviembre</option>
+                <option value="12">12 - Diciembre</option>
+            </select>
+            
+            <span>Año de vencimiento</span>
+            <select 
+                name="anio_vencimiento"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+                <option value="">Seleccionar año</option>
+                {% for year in range(2025, 2036) %}
+                <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+            
+            <span>Nombre en la tarjeta</span>
+            <input 
+                type="text"
+                name="nombre_titular"
+                placeholder="JUAN PEREZ"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            
+            <span>Email del titular</span>
+            <input 
+                type="email"
+                name="email"
+                placeholder="ejemplo@correo.com"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <button 
+                type="submit"
+                class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+            >
+                Crear ahora
+            </button>
+        </div>
+    </form>
+</section>
+
+<script>
+// Script para formatear número de tarjeta automáticamente
+document.querySelector('input[name="numero_tarjeta"]').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+    let formattedValue = value.replace(/(.{4})/g, '$1 ');
+    if (formattedValue.endsWith(' ')) {
+        formattedValue = formattedValue.slice(0, -1);
+    }
+    e.target.value = formattedValue;
+});
+
+// Script para validar solo números en CVC
+document.querySelector('input[name="cvc"]').addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/\D/g, '');
+});
+</script>
+{% endblock %}
