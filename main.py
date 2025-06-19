@@ -24,7 +24,12 @@ def create_app():
         
     return app
 
+app = create_app()
+
 # Solo se ejecuta si corres directamente este archivo (no en tests, por ejemplo)
 if __name__ == "__main__":
-    app = create_app()
+    # Solo para desarrollo local
+    port = int(os.environ.get("PORT", 3000))
+    app.run(debug=True, port=port)
+
     app.run(debug=True, port=3000)
