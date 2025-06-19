@@ -4,8 +4,13 @@
 
 {% block content %}
 <section class="w-[100dvw] min-h-[100dvh] flex flex-col justify-center items-center">
-    <form class="w-full md:max-w-[520px] min-h-[400px] flex flex-col justify-center items-center gap-[60px] !p-4">
-        <h1>Fail</h1>
+    <form class="w-full md:max-w-[520px] min-h-[400px] flex flex-col justify-center items-center gap-6 !p-4">
+        <img 
+            src="{{ url_for('static', filename='icons/fail.svg') }}" 
+            alt="Success" 
+            class="w-24 h-24 object-contain"
+        />
+        <h1 class="text-2xl font-bold text-green-600">Error</h1>
     </form>
 </section>
 {% endblock %}

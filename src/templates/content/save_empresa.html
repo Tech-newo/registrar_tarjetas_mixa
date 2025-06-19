@@ -7,26 +7,31 @@
     <form 
         method="POST" 
         action="{{ url_for('empresa_bp.validar_empresa_act') }}"
-        class="w-full md:max-w-[520px] min-h-[400px] flex flex-col justify-center items-center gap-[60px] !p-4"
+        class="w-full md:max-w-[520px] h-[100dvh] flex flex-col justify-between items-center md:justify-center gap-[60px] !p-4 !py-[10dvh]"
     >
         
         <!-- Título del formulario -->
-        <div class="w-full text-center">
-            <h1 class="!text-3xl font-bold text-gray-800">
-                ¿Estás registrado?
+        <div class="w-full text-left">
+            <h1 class="!text-5xl font-bold text-gray-800">
+                Hola!
             </h1>
-        </div>
-
-        <!-- Campo de entrada -->
-        <div class="w-full flex flex-col gap-[8px]">
-            <span>Valida la identificación de tu empresa para registrarla ó validar un nuevo metodo de pago</span>
+            <p>Bienvenido, ingresa el numero de identifcación para registrarse ó agregar un nuevo metodo de pago.</p>
             <input 
                 type="text"
                 name="identificacion"
                 placeholder="NIT / identificación"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-2 !my-10"
                 required
             />
+        </div>
+
+        <!-- Campo de entrada -->
+        <div class="w-full flex flex-col gap-[8px]">
+
+        </div>
+
+                <!-- Campo de entrada -->
+        <div class="w-full flex flex-col gap-[8px]">
             <button 
                 type="submit"
                 class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-200"

@@ -3,15 +3,30 @@
 {% block title %}Guardar empresa{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Validar código</h1>
-    <p class="subtitle">Ingrese el código de verificación de 6 dígitos</p>
-    
+<section class="w-[100dvw] min-h-[100dvh] flex flex-col justify-center items-center">
     <!-- FORMULARIO TRADICIONAL -->
     <form method="POST" 
     action="{{ url_for('pagos_bp.crear_tarjeta') }}"
-    onsubmit="return prepararFormulario()">
-        <div class="code-inputs">
+    onsubmit="return prepararFormulario()"
+    class="w-full md:max-w-[520px] h-[100dvh] flex flex-col justify-between items-center md:justify-center gap-[60px] !p-4 !py-[10dvh]"
+    >
+
+    <!-- Título del formulario -->
+    <div class="w-full text-left">
+        <div class="!mb-4 flex items-center">
+            <a href="{{ url_for('empresa_bp.validar_empresa') }}" class="inline-block">
+                <img 
+                    src="{{ url_for('static', filename='icons/arrow-left.svg') }}" 
+                    alt="Volver" 
+                    class="w-6 h-6 !mr-4 object-contain cursor-pointer hover:opacity-80 transition"
+                />
+            </a>
+            <h1 class="!text-3xl font-bold text-gray-800 !m-0">
+                Valida tu identidad
+            </h1>
+        </div>
+        <p>Bienvenido, ingresa el numero de identifcación para registrarse ó agregar un nuevo metodo de pago.</p>
+        <div class="code-inputs !my-10">
             {% for i in range(6) %}
             <input 
                 type="text"
@@ -23,21 +38,23 @@
             />
             {% endfor %}
         </div>
-
-        <!-- Campo oculto para enviar el código -->
         <input type="hidden" name="code" id="codigo_completo">
-
-        <!-- Campo oculto para la empresa -->
         <input type="hidden" name="empresa" value='{{ empresas | tojson }}'>
+    </div>
 
+
+    <div class="w-full text-left">
         <button 
             type="submit"
-            class="verify-button"
+            class=""
         >
             Verificar código
         </button>
+    </div>
+
+
     </form>
-</div>
+</section>
 
 <script>
     function moveToNext(input) {
