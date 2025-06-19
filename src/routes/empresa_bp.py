@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
-from infrastructure.executables import get_empresas_func, create_empresas_func, set_validation_code_func
-from utils import generar_numero_validacion
-from infrastructure.make import send_validation_code
+from src.infrastructure.executables import get_empresas_func, create_empresas_func, set_validation_code_func
+from src.utils import generar_numero_validacion
+from src.infrastructure.make import send_validation_code
 
 # Creamos el blueprint
 empresa_bp = Blueprint("empresa_bp", __name__)

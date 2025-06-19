@@ -1,4 +1,4 @@
-from infrastructure.db import SupabaseConn
+from src.infrastructure.db import SupabaseConn
 
 db_conn = SupabaseConn()
 db_exec = db_conn.connect()

@@ -1,6 +1,6 @@
-from infrastructure.db import SupabaseConn
+from src.infrastructure.db import SupabaseConn
 from datetime import timedelta
-from utils import get_current_epoch_seconds, add_timedelta_and_get_epoch_seconds
+from src.utils import get_current_epoch_seconds, add_timedelta_and_get_epoch_seconds
 
 db_conn = SupabaseConn()
 db_exec = db_conn.connect()

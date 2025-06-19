@@ -1,5 +1,5 @@
-from infrastructure.db import SupabaseConn
-from utils import get_current_epoch_seconds
+from src.infrastructure.db import SupabaseConn
+from src.utils import get_current_epoch_seconds
 
 db_conn = SupabaseConn()
 db_exec = db_conn.connect()

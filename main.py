@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for
-from routes.pagos_bp import pagos_bp
-from routes.empresa_bp import empresa_bp
+from src.routes.pagos_bp import pagos_bp
+from src.routes.empresa_bp import empresa_bp
 import dotenv
 import os
 

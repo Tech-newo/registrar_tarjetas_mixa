@@ -2,7 +2,7 @@
 import os
 from supabase import create_client, Client
 from supabase.client import ClientOptions
-from infrastructure.interfaces import DBConn
+from src.infrastructure.interfaces import DBConn
 
 class SupabaseConn(DBConn):
     _instance = None  # Variable de clase para el Singleton
