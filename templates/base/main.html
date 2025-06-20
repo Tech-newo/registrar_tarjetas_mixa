@@ -15,7 +15,17 @@
     ></script>
 </head>
 <body>
+    <div class="fixed top-2 right-3 h-auto w-16 bg-white/20">
+      <img 
+        src="{{ url_for('static', filename='icons/newo.svg') }}" 
+        alt="Logotipo de Newo" 
+        class="block object-cover w-full h-full cursor-pointer hover:opacity-80 transition"
+      />
+    </div>
+
     {% block content %}
+    {% endblock %}
+    {% block scripts %}
     {% endblock %}
 </body>
 </html>

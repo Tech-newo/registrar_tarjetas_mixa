@@ -13,7 +13,9 @@ def validar_empresa():
 
 @empresa_bp.route("/act", methods=["GET", "POST"])
 def validar_empresa_act():
+    
     if request.method == "POST":
+        
         print('estoy ingresando al post')
         identificacion = request.form.get("identificacion")
         print('estoy obteniedo la identificacion', identificacion)
@@ -37,14 +39,12 @@ def validar_empresa_act():
                                      empresas=empresas, 
                                      identificacion=identificacion)
             else:
-                # Si no encuentra empresas, redirigir a crear empresa
                 return redirect(url_for('empresa_bp.crear_empresa', identificacion=identificacion))
                 
         except Exception as e:
             flash(f"Error al consultar empresa: {str(e)}", "error")
             return redirect(url_for('empresa_bp.validar_empresa'))
     
-    # Si es GET, mostrar formulario vacío o información
     identificacion = request.args.get('identificacion')
     return render_template('content/check_empresa.html', identificacion=identificacion)
 

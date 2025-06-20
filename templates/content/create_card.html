@@ -3,6 +3,14 @@
 {% block title %}Guardar empresa{% endblock %}
 
 {% block content %}
+    <div class="fixed top-12 right-3 h-auto w-16">
+      <img 
+        src="{{ url_for('static', filename='icons/wompi.svg') }}" 
+        alt="Logotipo de Newo" 
+        class="block object-cover w-full h-full cursor-pointer hover:opacity-80 transition"
+      />
+    </div>
+
 <section class="w-[100dvw] min-h-[100dvh] flex flex-col justify-center items-center">
     <form
         method="POST" 
@@ -113,6 +121,48 @@
         </div>
     </form>
 </section>
+{% include 'content/spinner.html' %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const spinner = document.getElementById('spinner-overlay');
+    const submitBtn = document.getElementById('submit-button');
+    const form = document.getElementById('empresa-form');
+
+    // Ocultar spinner al cargar
+    if (spinner) {
+        spinner.classList.add('hidden');
+    }
+
+    if (submitBtn && spinner && form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Mostrar spinner
+            spinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            submitBtn.textContent = "Procesando...";
+            
+            // Timeout de seguridad: si no se redirige en 10 segundos, ocultar spinner
+            const timeoutId = setTimeout(() => {
+                spinner.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                submitBtn.textContent = "Validar ahora";
+                alert('Hubo un problema. Por favor, intenta nuevamente.');
+            }, 10000);
+            
+            // Enviar formulario
+            setTimeout(() => {
+                form.submit();
+            }, 100);
+        });
+    }
+});
+</script>
 
 <script>
 // Script para formatear número de tarjeta automáticamente

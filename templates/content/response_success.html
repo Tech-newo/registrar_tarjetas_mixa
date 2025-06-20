@@ -5,12 +5,18 @@
 {% block content %}
 <section class="w-[100dvw] min-h-[100dvh] flex flex-col justify-center items-center">
     <form class="w-full md:max-w-[520px] min-h-[400px] flex flex-col justify-center items-center gap-6 !p-4">
-        <img 
-            src="{{ url_for('static', filename='icons/success.svg') }}" 
-            alt="Success" 
-            class="w-24 h-24 object-contain"
-        />
+        <img src="{{ url_for('static', filename='icons/success.svg') }}" alt="Success" class="w-24 h-24 object-contain" />
         <h1 class="text-2xl font-bold text-green-600">Success</h1>
+        <p>{{ mensaje | default('Se ha completado la operación con éxito') }}</p>
+
+        <!-- Botón que redirecciona con JavaScript -->
+        <button
+          type="button"
+          onclick="location.href='{{ redirect_to or url_for('empresa_bp.validar_empresa') }}'"
+          class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+        >
+          Aceptar
+        </button>
     </form>
 </section>
 {% endblock %}

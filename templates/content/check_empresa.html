@@ -1,127 +1,201 @@
 {% extends 'base/main.html' %}
 
-{% block title %}Guardar empresa{% endblock %}
+{% block title %}Validar código{% endblock %}
 
 {% block content %}
 <section class="w-[100dvw] min-h-[100dvh] flex flex-col justify-center items-center">
-    <!-- FORMULARIO TRADICIONAL -->
+    <!-- FORMULARIO DE VERIFICACIÓN -->
     <form method="POST" 
-    action="{{ url_for('pagos_bp.crear_tarjeta') }}"
-    onsubmit="return prepararFormulario()"
-    class="w-full md:max-w-[520px] h-[100dvh] flex flex-col justify-between items-center md:justify-center gap-[60px] !p-4 !py-[10dvh]"
-    >
+          action="{{ url_for('pagos_bp.crear_tarjeta') }}"
+          id="verification-form"
+          class="w-full md:max-w-[520px] h-[100dvh] flex flex-col justify-between items-center md:justify-center gap-[60px] !p-4 !py-[10dvh]">
 
-    <!-- Título del formulario -->
-    <div class="w-full text-left">
-        <div class="!mb-4 flex items-center">
-            <a href="{{ url_for('empresa_bp.validar_empresa') }}" class="inline-block">
-                <img 
-                    src="{{ url_for('static', filename='icons/arrow-left.svg') }}" 
-                    alt="Volver" 
-                    class="w-6 h-6 !mr-4 object-contain cursor-pointer hover:opacity-80 transition"
+        <!-- Título del formulario -->
+        <div class="w-full text-left">
+            <div class="!mb-4 flex items-center">
+                <a href="{{ url_for('empresa_bp.validar_empresa') }}" class="inline-block">
+                    <img 
+                        src="{{ url_for('static', filename='icons/arrow-left.svg') }}" 
+                        alt="Volver" 
+                        class="w-6 h-6 !mr-4 object-contain cursor-pointer hover:opacity-80 transition"
+                    />
+                </a>
+                <h1 class="!text-3xl font-bold text-gray-800 !m-0">
+                    Valida tu identidad
+                </h1>
+            </div>
+            <p>Bienvenido, ingresa el código de verificación de 6 dígitos.</p>
+            
+            <div class="code-inputs !my-10">
+                {% for i in range(6) %}
+                <input 
+                    type="text"
+                    maxlength="1"
+                    class="code-input"
+                    data-index="{{ i }}"
                 />
-            </a>
-            <h1 class="!text-3xl font-bold text-gray-800 !m-0">
-                Valida tu identidad
-            </h1>
+                {% endfor %}
+            </div>
+            
+            <input type="hidden" name="code" id="codigo_completo">
+            <input type="hidden" name="empresa" value='{{ empresas | tojson }}'>
         </div>
-        <p>Bienvenido, ingresa el numero de identifcación para registrarse ó agregar un nuevo metodo de pago.</p>
-        <div class="code-inputs !my-10">
-            {% for i in range(6) %}
-            <input 
-                type="text"
-                maxlength="1"
-                class="code-input"
-                data-index="{{ i }}"
-                oninput="moveToNext(this)"
-                onkeydown="moveToPrevious(event, this)"
-            />
-            {% endfor %}
+
+        <div class="w-full text-left">
+            <button 
+                type="submit"
+                id="submit-button"
+                class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition duration-200"
+            >
+                Verificar código
+            </button>
         </div>
-        <input type="hidden" name="code" id="codigo_completo">
-        <input type="hidden" name="empresa" value='{{ empresas | tojson }}'>
-    </div>
-
-
-    <div class="w-full text-left">
-        <button 
-            type="submit"
-            class=""
-        >
-            Verificar código
-        </button>
-    </div>
-
-
     </form>
 </section>
 
+{% include 'content/spinner.html' %}
+{% endblock %}
+
+{% block scripts %}
 <script>
-    function moveToNext(input) {
-        const maxLength = parseInt(input.maxLength);
-        const currentLength = input.value.length;
+// Funciones para manejar los inputs de código
+function moveToNext(input) {
+    const maxLength = parseInt(input.maxLength);
+    const currentLength = input.value.length;
+    
+    if (currentLength >= maxLength) {
+        const nextIndex = parseInt(input.dataset.index) + 1;
+        const nextInput = document.querySelector(`.code-input[data-index="${nextIndex}"]`);
         
-        if (currentLength >= maxLength) {
-            const nextIndex = parseInt(input.dataset.index) + 1;
-            const nextInput = document.querySelector(`.code-input[data-index="${nextIndex}"]`);
-            
-            if (nextInput) {
-                nextInput.focus();
-            }
+        if (nextInput) {
+            nextInput.focus();
         }
-        
-        input.value = input.value.charAt(0);
     }
     
-    function moveToPrevious(event, input) {
-        if (event.key === 'Backspace' && input.value.length === 0) {
-            const prevIndex = parseInt(input.dataset.index) - 1;
-            const prevInput = document.querySelector(`.code-input[data-index="${prevIndex}"]`);
-            
-            if (prevIndex >= 0 && prevInput) {
-                prevInput.focus();
-            }
+    // Solo permitir números
+    input.value = input.value.replace(/[^0-9]/g, '').charAt(0);
+}
+
+function moveToPrevious(event, input) {
+    if (event.key === 'Backspace' && input.value.length === 0) {
+        const prevIndex = parseInt(input.dataset.index) - 1;
+        const prevInput = document.querySelector(`.code-input[data-index="${prevIndex}"]`);
+        
+        if (prevIndex >= 0 && prevInput) {
+            prevInput.focus();
         }
     }
+}
 
-    function prepararFormulario() {
-        const inputs = document.querySelectorAll('.code-input');
-        let code = '';
+function validateAndPrepareCode() {
+    const inputs = document.querySelectorAll('.code-input');
+    let code = '';
 
-        inputs.forEach(input => {
-            code += input.value;
-        });
-
-        if (code.length !== 6) {
-            alert('Por favor complete todos los dígitos del código');
-            return false; // Evita envío del formulario
-        }
-
-        // Asignar el valor al input oculto
-        document.getElementById('codigo_completo').value = code;
-        return true; // Permite el envío
-    }
-
-    // Detecta evento de pegar
-    document.querySelector('.code-input[data-index="0"]').addEventListener('paste', function (e) {
-        e.preventDefault();
-        const paste = (e.clipboardData || window.clipboardData).getData('text');
-        const digits = paste.replace(/\D/g, '').slice(0, 6); // Solo dígitos, máximo 6
-
-        const inputs = document.querySelectorAll('.code-input');
-        digits.split('').forEach((digit, idx) => {
-            if (inputs[idx]) {
-                inputs[idx].value = digit;
-            }
-        });
-
-        // Mueve el foco al siguiente input vacío
-        for (let i = 0; i < inputs.length; i++) {
-            if (inputs[i].value === '') {
-                inputs[i].focus();
-                break;
-            }
-        }
+    inputs.forEach(input => {
+        code += input.value;
     });
+
+    if (code.length !== 6) {
+        alert('Por favor complete todos los dígitos del código');
+        return false;
+    }
+
+    // Asignar el valor al input oculto
+    document.getElementById('codigo_completo').value = code;
+    return true;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const spinner = document.getElementById('spinner-overlay');
+    const submitBtn = document.getElementById('submit-button');
+    const form = document.getElementById('verification-form');
+    const codeInputs = document.querySelectorAll('.code-input');
+
+    // Ocultar spinner al cargar la página
+    if (spinner) {
+        spinner.classList.add('hidden');
+    }
+
+    // Configurar eventos para los inputs de código
+    codeInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            moveToNext(this);
+        });
+        
+        input.addEventListener('keydown', function(event) {
+            moveToPrevious(event, this);
+        });
+    });
+
+    // Evento de pegar en el primer input
+    if (codeInputs[0]) {
+        codeInputs[0].addEventListener('paste', function (e) {
+            e.preventDefault();
+            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            const digits = paste.replace(/\D/g, '').slice(0, 6);
+
+            digits.split('').forEach((digit, idx) => {
+                if (codeInputs[idx]) {
+                    codeInputs[idx].value = digit;
+                }
+            });
+
+            // Mover foco al siguiente input vacío
+            for (let i = 0; i < codeInputs.length; i++) {
+                if (codeInputs[i].value === '') {
+                    codeInputs[i].focus();
+                    break;
+                }
+            }
+        });
+    }
+
+    // Manejar envío del formulario
+    if (form && spinner && submitBtn) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Validar código antes de mostrar spinner
+            if (!validateAndPrepareCode()) {
+                return; // No continuar si la validación falla
+            }
+            
+            // Mostrar spinner
+            spinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            submitBtn.textContent = "Verificando...";
+            
+            // Timeout de seguridad
+            const timeoutId = setTimeout(() => {
+                spinner.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                submitBtn.textContent = "Verificar código";
+                alert('Hubo un problema. Por favor, intenta nuevamente.');
+            }, 10000);
+            
+            // Enviar formulario
+            setTimeout(() => {
+                form.submit(); // Envía a Flask
+            }, 100);
+        });
+
+        // Manejar regreso a la página
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                spinner.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                submitBtn.textContent = "Verificar código";
+            }
+        });
+    }
+
+    // Enfocar el primer input
+    if (codeInputs[0]) {
+        codeInputs[0].focus();
+    }
+});
 </script>
 {% endblock %}

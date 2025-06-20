@@ -1,45 +1,89 @@
+{# Extiende la plantilla base principal #}
 {% extends 'base/main.html' %}
 
 {% block title %}Guardar empresa{% endblock %}
 
 {% block content %}
 <section class="w-[100dvw] min-h-[100dvh] flex flex-col justify-center items-center">
+    
+    {# Formulario de validación de empresa #}
     <form 
         method="POST" 
         action="{{ url_for('empresa_bp.validar_empresa_act') }}"
         class="w-full md:max-w-[520px] h-[100dvh] flex flex-col justify-between items-center md:justify-center gap-[60px] !p-4 !py-[10dvh]"
+        id="empresa-form"
     >
-        
-        <!-- Título del formulario -->
+        <!-- Encabezado del formulario -->
         <div class="w-full text-left">
             <h1 class="!text-5xl font-bold text-gray-800">
                 Hola!
             </h1>
-            <p>Bienvenido, ingresa el numero de identifcación para registrarse ó agregar un nuevo metodo de pago.</p>
+            <p>
+                Bienvenido, ingresa el número de identificación para registrarse o agregar un nuevo método de pago.
+            </p>
             <input 
                 type="text"
                 name="identificacion"
                 placeholder="NIT / identificación"
-                class="w-full px-4 py-2 !my-10"
+                class="w-full px-4 py-2 !my-10 border border-gray-300 rounded-md"
                 required
             />
         </div>
 
-        <!-- Campo de entrada -->
-        <div class="w-full flex flex-col gap-[8px]">
-
-        </div>
-
-                <!-- Campo de entrada -->
+        <!-- Botón de envío -->
         <div class="w-full flex flex-col gap-[8px]">
             <button 
+                id="submit-button"
                 type="submit"
                 class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-200"
             >
                 Validar ahora
             </button>
         </div>
-
     </form>
+
+    {# Spinner incluido como componente parcial #}
+    {% include 'content/spinner.html' %}
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const spinner = document.getElementById('spinner-overlay');
+    const submitBtn = document.getElementById('submit-button');
+    const form = document.getElementById('empresa-form');
+
+    // Ocultar spinner al cargar
+    if (spinner) {
+        spinner.classList.add('hidden');
+    }
+
+    if (submitBtn && spinner && form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Mostrar spinner
+            spinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            submitBtn.textContent = "Procesando...";
+            
+            // Timeout de seguridad: si no se redirige en 10 segundos, ocultar spinner
+            const timeoutId = setTimeout(() => {
+                spinner.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                submitBtn.textContent = "Validar ahora";
+                alert('Hubo un problema. Por favor, intenta nuevamente.');
+            }, 10000);
+            
+            // Enviar formulario
+            setTimeout(() => {
+                form.submit();
+            }, 100);
+        });
+    }
+});
+</script>
 {% endblock %}
