@@ -12,4 +12,5 @@ class MedioPago:
     anio_vencimiento: str
     nombre_titular: str
     email:str
+    cuotas:int
     

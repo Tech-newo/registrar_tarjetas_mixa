@@ -3,6 +3,9 @@ import os
 from supabase import create_client, Client
 from supabase.client import ClientOptions
 from src.infrastructure.interfaces import DBConn
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class SupabaseConn(DBConn):
     _instance = None  # Variable de clase para el Singleton

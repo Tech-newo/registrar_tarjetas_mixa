@@ -14,6 +14,7 @@
 <section class="w-[100dvw] min-h-[100dvh] flex flex-col justify-center items-center">
     <form
         method="POST" 
+        id="empresa-form"
         action="{{ url_for('pagos_bp.crear_tarjeta_act') }}"
         class="w-full md:max-w-[520px] min-h-[100dvh] flex flex-col justify-between items-center md:justify-center gap-[60px] !p-4 !py-[10dvh]"
     >
@@ -108,12 +109,38 @@
                 required
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+
+        <span>Cuotas</span>
+        <select 
+            name="cuotas"
+            id="cuotas"
+            required
+            disabled
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+            <option value="1" selected>01</option>
+            <option value="2">02</option>
+            <option value="3">03</option>
+            <option value="4">04</option>
+            <option value="5">05</option>
+            <option value="6">06</option>
+            <option value="7">07</option>
+            <option value="8">08</option>
+            <option value="9">09</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+        </select>
+        <span id="tipo-tarjeta" class="!text-xs text-gray-600 font-bold"></span>
+        <span id="debug-info" class="text-xs text-gray-400" style="display:none;"></span>
+
         </div>
 
         <!-- Botón -->
         <div class="w-full flex flex-col gap-[8px]">
             <button 
                 type="submit"
+                id="submit-button"
                 class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-200"
             >
                 Crear ahora
@@ -151,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 spinner.classList.add('hidden');
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                submitBtn.textContent = "Validar ahora";
+                submitBtn.textContent = "Crear ahora";
                 alert('Hubo un problema. Por favor, intenta nuevamente.');
             }, 10000);
             
@@ -180,4 +207,104 @@ document.querySelector('input[name="cvc"]').addEventListener('input', function(e
     e.target.value = e.target.value.replace(/\D/g, '');
 });
 </script>
+
+<script>
+let debounceTimer;
+const DEBUG = false; // Cambiar a true para habilitar debug
+
+document.querySelector('input[name="numero_tarjeta"]').addEventListener('input', function(e) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => validarBIN(e.target.value), 500);
+});
+
+async function validarBIN(value) {
+    const cuotasSelect = document.getElementById("cuotas");
+    const tipoTarjetaSpan = document.getElementById("tipo-tarjeta");
+    const debugSpan = document.getElementById("debug-info");
+
+    let cleanValue = value.replace(/\s/g, '').replace(/\D/g, '');
+
+    // Reset cuotas
+    cuotasSelect.value = "1";
+    cuotasSelect.disabled = true;
+    cuotasSelect.classList.add("hidden");
+    tipoTarjetaSpan.textContent = "";
+    
+    if (DEBUG) {
+        debugSpan.style.display = "block";
+        debugSpan.textContent = `Debug: Valor limpio: ${cleanValue}`;
+    }
+
+    if (cleanValue.length >= 6) {
+        let bin = cleanValue.substring(0, 6);
+        
+        if (DEBUG) {
+            debugSpan.textContent += ` | BIN consultado: ${bin}`;
+        }
+
+        try {
+            console.log(`Consultando BIN: ${bin}`);
+            let response = await fetch(`/binlookup/${bin}`);
+            
+            if (DEBUG) {
+                debugSpan.textContent += ` | Status: ${response.status}`;
+            }
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            let data = await response.json();
+            console.log("Respuesta de BIN lookup:", data);
+            
+            if (DEBUG) {
+                debugSpan.textContent += ` | Datos: ${JSON.stringify(data)}`;
+            }
+
+            // Usar los campos correctos (tanto originales como alias)
+            const tipo = data.type || data.tipo;
+            const marca = data.brand || data.marca;
+            const pais = data.country || data.pais;
+
+            if (tipo && marca) {
+                let infoTexto = `Tipo: ${tipo.toUpperCase()} | Marca: ${marca.toUpperCase()}`;
+                
+                if (pais && pais.name) {
+                    infoTexto += ` | País: ${pais.name}`;
+                } else if (pais && pais.nombre) {
+                    infoTexto += ` | País: ${pais.nombre}`;
+                }
+                
+                tipoTarjetaSpan.textContent = infoTexto;
+                
+                // Solo mostrar cuotas si es tarjeta de crédito
+                if (tipo && tipo.toLowerCase() === "credit") {
+                    console.log("Tarjeta de crédito detectada - habilitando cuotas");
+                    cuotasSelect.disabled = false;
+                    cuotasSelect.classList.remove("hidden");
+                } else {
+                    console.log(`Tipo de tarjeta: ${tipo} - cuotas deshabilitadas`);
+                }
+            } else {
+                console.log("Datos incompletos en respuesta:", data);
+                tipoTarjetaSpan.textContent = "Información incompleta de la tarjeta";
+            }
+
+        } catch (error) {
+            console.error("Error al consultar BIN:", error);
+            tipoTarjetaSpan.textContent = `Error consultando tarjeta: ${error.message}`;
+            
+            if (DEBUG) {
+                debugSpan.textContent += ` | Error: ${error.message}`;
+            }
+        }
+    }
+}
+
+// Función para test manual (desde consola del navegador)
+window.testBIN = function(bin) {
+    validarBIN(bin);
+};
+</script>
+
 {% endblock %}

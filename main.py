@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for
 from src.routes.pagos_bp import pagos_bp
 from src.routes.empresa_bp import empresa_bp
+from src.routes.binlookup_bp import binlookup_bp
 import dotenv
 import os
 
@@ -15,7 +16,8 @@ def create_app():
     # Registrar Blueprints (routers)
     app.register_blueprint(empresa_bp, url_prefix="/empresa")
     app.register_blueprint(pagos_bp, url_prefix="/pagos")
-    
+    app.register_blueprint(binlookup_bp, url_prefix="/binlookup")
+
     # Redireccionar la ruta raíz a /empresa
     @app.route('/')
     def index():

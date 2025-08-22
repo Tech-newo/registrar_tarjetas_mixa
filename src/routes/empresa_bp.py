@@ -36,7 +36,8 @@ def validar_empresa_act():
                 send_validation_code(empresas[0]['correo'], validation_code)
                 
                 return render_template('content/check_empresa.html', 
-                                     empresas=empresas, 
+                                     empresas=empresas,
+                                     correo=empresas[0]['correo'],
                                      identificacion=identificacion)
             else:
                 return redirect(url_for('empresa_bp.crear_empresa', identificacion=identificacion))
@@ -46,7 +47,10 @@ def validar_empresa_act():
             return redirect(url_for('empresa_bp.validar_empresa'))
     
     identificacion = request.args.get('identificacion')
-    return render_template('content/check_empresa.html', identificacion=identificacion)
+    return render_template('content/check_empresa.html', 
+                            empresas=empresas,
+                            correo=empresas[0]['correo'],
+                            identificacion=identificacion )
 
 @empresa_bp.route("/create_empresa", methods=["GET", "POST"])
 def crear_empresa():

@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2025-08-22T11:36:46.750388",
+    "total_ranges": 29
+  },
+  "ranges": {
+    "4": {
+      "type": "credit",
+      "brand": "visa",
+      "category": "standard"
+    },
+    "4000": {
+      "type": "debit",
+      "brand": "visa",
+      "category": "debit"
+    },
+    "4117": {
+      "type": "debit",
+      "brand": "visa",
+      "category": "electron"
+    },
+    "4175": {
+      "type": "debit",
+      "brand": "visa",
+      "category": "electron"
+    },
+    "51": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "52": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "53": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "54": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "55": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "5100": {
+      "type": "debit",
+      "brand": "mastercard",
+      "category": "debit"
+    },
+    "222": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "223": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "224": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "225": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "226": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "227": {
+      "type": "credit",
+      "brand": "mastercard",
+      "category": "standard"
+    },
+    "34": {
+      "type": "credit",
+      "brand": "amex",
+      "category": "standard"
+    },
+    "37": {
+      "type": "credit",
+      "brand": "amex",
+      "category": "standard"
+    },
+    "6011": {
+      "type": "credit",
+      "brand": "discover",
+      "category": "standard"
+    },
+    "65": {
+      "type": "credit",
+      "brand": "discover",
+      "category": "standard"
+    },
+    "30": {
+      "type": "credit",
+      "brand": "diners",
+      "category": "standard"
+    },
+    "36": {
+      "type": "credit",
+      "brand": "diners",
+      "category": "standard"
+    },
+    "38": {
+      "type": "credit",
+      "brand": "diners",
+      "category": "standard"
+    },
+    "5018": {
+      "type": "debit",
+      "brand": "maestro",
+      "category": "debit"
+    },
+    "5020": {
+      "type": "debit",
+      "brand": "maestro",
+      "category": "debit"
+    },
+    "6304": {
+      "type": "debit",
+      "brand": "maestro",
+      "category": "debit"
+    },
+    "6759": {
+      "type": "debit",
+      "brand": "maestro",
+      "category": "debit"
+    },
+    "35": {
+      "type": "credit",
+      "brand": "jcb",
+      "category": "standard"
+    },
+    "62": {
+      "type": "credit",
+      "brand": "unionpay",
+      "category": "standard"
+    }
+  }
+}

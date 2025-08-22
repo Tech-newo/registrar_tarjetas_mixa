@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+import requests
 from src.domain.models import Empresa, MedioPago
 from src.infrastructure.executables import get_empresas_func
 from src.infrastructure.make import create_card
@@ -95,7 +96,8 @@ def crear_tarjeta_act():
                 mes_vencimiento=request.form.get('mes_vencimiento'),
                 anio_vencimiento=request.form.get('anio_vencimiento')[-2:],
                 nombre_titular=request.form.get('nombre_titular'),
-                email=request.form.get('email')
+                email=request.form.get('email'),
+                cuotas=int(request.form.get('cuotas', 1))
             )
             
             # Crear objeto empresa con datos existentes
@@ -120,7 +122,13 @@ def crear_tarjeta_act():
             # Aquí deberías llamar a la función para guardar la tarjeta
             resultado = create_card(empresa=empresa, card=tarjeta)
             
-            return render_template('content/response_success.html')  # Cambiar por una página de éxito
+            print ('Este es el resultado de la operación ', resultado)
+            
+            if resultado == 400:
+                print("❌ Error al crear la tarjeta")
+                return render_template('content/response_fail.html')
+            
+            return render_template('content/response_success.html')
             
         except Exception as e:
             print(f"❌ Error procesando tarjeta: {str(e)}")
